@@ -16,7 +16,7 @@ const Login = () => {
         />
       </div>
 
-      <form className="  absolute mt-[5%] mx-auto right-0 left-0 w-[24%] h-[69%] px-[3rem] py-[2.5rem] bg-transparent bg-black bg-opacity-80 rounded-md">
+      <form className="  absolute mt-[5%] mx-auto right-0 left-0 w-[24%] h-[69%] px-[3rem] py-[2.5rem] bg-transparent-80 bg-black bg-opacity-80 rounded-md">
         <div className="m-[6%] mb-[1%]">
           <h1 className="font-semibold text-white text-3xl mb-[4%]">
             {isSignIn ? "Sign in" : "Sign up"}
@@ -70,7 +70,7 @@ const Login = () => {
           )}
           {!isSignIn && (
             <h1 className="text-gray-400 mt-[20%]">
-              Already user?{" "}
+              Already user ? {" "}
               <span
                 className="text-white font-semibold hover:underline cursor-pointer"
                 onClick={toggleSignInForm}
