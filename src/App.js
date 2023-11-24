@@ -1,13 +1,10 @@
 import "./App.css";
+import Body from "./components/Body";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1 className=" flex m-auto text-4xl text-blue-500 font-bold justify-center">
-          Hellow.. Hellow.. Hellow..{" "}
-        </h1>
-      </header>
+      <Body />
     </div>
   );
 }
