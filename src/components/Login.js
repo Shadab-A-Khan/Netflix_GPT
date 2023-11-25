@@ -1,21 +1,56 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
-
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
 const Login = () => {
   const [isSignIn, setisSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const email = useRef(null);
   const password = useRef(null);
-  const name = useRef(null);
   const handleButtonClick = () => {
-    const message = checkValidData(
-      email.current.value,
-      password.current.value,
-      name.current.value
-    );
-    setErrorMessage(message);
+    const message = checkValidData(email.current.value, password.current.value);
+    if (message) {
+      setErrorMessage(message);
+      return;
+    }
+
+    if (!isSignIn) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setisSignIn(errorCode + "-" + errorMessage);
+        });
+    } else {
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setisSignIn(errorCode + "-" + errorMessage);
+        });
+    }
   };
 
   const toggleSignInForm = () => {
@@ -42,7 +77,6 @@ const Login = () => {
           </h1>
           {!isSignIn && (
             <input
-              ref={name}
               type="text"
               placeholder="Enter your Name"
               className="p-[5%] py-[4%] mt-[5%] rounded-md w-full bg-gray-700 text-white"
