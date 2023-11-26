@@ -1,41 +1,75 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
+import { useNavigate } from "react-router-dom";
+import { addUser } from "../utils/userSlice";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useDispatch } from "react-redux";
+
 const Login = () => {
   const [isSignIn, setisSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
+  const dispath = useDispatch();
 
   const email = useRef(null);
   const password = useRef(null);
+  const name = useRef(null);
   const handleButtonClick = () => {
+    //validate user entry
     const message = checkValidData(email.current.value, password.current.value);
     if (message) {
       setErrorMessage(message);
       return;
     }
 
+    //firebase api
+    // sign-up and sign-in -Authentication
     if (!isSignIn) {
+      //sign-up
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
-          // Signed up
           const user = userCredential.user;
+
+          updateProfile(user, {
+            displayName: name.current.value,
+            photoURL: "https://avatars.githubusercontent.com/u/78543910?v=4",
+            // photoURL: USER_AVATAR,
+          })
+            .then(() => {
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispath(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+              navigate("/browse");
+            })
+            .catch((error) => {
+              console.log(error + " login page");
+            });
           console.log(user);
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+          console.log(errorCode + "-" + errorMessage);
+          setErrorMessage("error in singing-up");
         });
     } else {
+      //sign-in
       signInWithEmailAndPassword(
         auth,
         email.current.value,
@@ -44,6 +78,7 @@ const Login = () => {
         .then((userCredential) => {
           const user = userCredential.user;
           console.log(user);
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -78,6 +113,7 @@ const Login = () => {
           </h1>
           {!isSignIn && (
             <input
+              ref={name}
               type="text"
               placeholder="Enter your Name"
               className="p-[5%] py-[4%] mt-[5%] rounded-md w-full bg-gray-700 text-white"
@@ -154,5 +190,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
