@@ -33,7 +33,7 @@ const Login = () => {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setisSignIn(errorCode + "-" + errorMessage);
+          setErrorMessage(errorCode + "-" + errorMessage);
         });
     } else {
       signInWithEmailAndPassword(
@@ -48,7 +48,8 @@ const Login = () => {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setisSignIn(errorCode + "-" + errorMessage);
+          console.log(errorCode + "-" + errorMessage);
+          setErrorMessage("Invalid Login Credentials");
         });
     }
   };
@@ -153,3 +154,5 @@ const Login = () => {
 };
 
 export default Login;
+
+
