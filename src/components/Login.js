@@ -2,12 +2,15 @@ import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
 import { addUser } from "../utils/userSlice";
-import { createUserWithEmailAndPassword,  signInWithEmailAndPassword,  updateProfile} from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useDispatch } from "react-redux";
 import { USER_AVATAR } from "../utils/constants";
 const Login = () => {
-
   const [isSignIn, setisSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const dispath = useDispatch();
@@ -54,7 +57,6 @@ const Login = () => {
             .catch((error) => {
               console.log(error + " login page");
             });
-          console.log(user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -86,7 +88,7 @@ const Login = () => {
   };
 
   return (
-    <div> 
+    <div>
       <Header />
       <div className="absolute">
         <img
