@@ -7,12 +7,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
-import { LOGO } from "../utils/constants";
-
+import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
+import { toggleGptSearchView } from "../utils/gptSlice";
+import { changeLanguage } from "../utils/configSlice";
 const Header = () => {
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
   const navigate = useNavigate();
   const user = useSelector((store) => store.user);
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
 
   const handleSignOut = () => {
     signOut(auth)
@@ -23,11 +25,19 @@ const Header = () => {
       });
   };
 
+  const handleGptSearchClick = () => {
+    dispatch(toggleGptSearchView());
+  };
+
+  const handleLanguageChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
+
   useEffect(() => {
     const unsubcribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName, photoURL } = user;
-        dispath(
+        dispatch(
           addUser({
             uid: uid,
             email: email,
@@ -37,7 +47,7 @@ const Header = () => {
         );
         navigate("/browse");
       } else {
-        dispath(removeUser());
+        dispatch(removeUser());
         navigate("/");
       }
     });
@@ -47,24 +57,57 @@ const Header = () => {
 
   return (
     <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
-      <img
-        className="w-44"
-        src={LOGO}
-        alt="logo"
-      ></img>
+      {!showGptSearch && <img className="w-44" src={LOGO} alt="logo"></img>}
+      {showGptSearch && (
+        <h1 className="w-[15%] text-4xl bg-purple-800  px-4 rounded-lg pt-2 mt-3 text-white">
+          GPT Search
+        </h1>
+      )}
       {user && (
         <div className="flex p-2">
-          <img
-            className="w-12 h-12 mr-5 mt-2 rounded-lg"
-            src={user?.photoURL}
-            alt="usericon"
-          />
-          <button
-            className="font-bold text-lg hover:underline text-white hover:scale-95 hover:text-red-700"
-            onClick={handleSignOut}
-          >
-            Sign out
-          </button>
+          {showGptSearch && (
+            <select
+              className="h-12 mr-5 px-4 mt-2 rounded-lg font-bold  bg-gray-900 text-white"
+              onChange={handleLanguageChange}
+            >
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <option key={lang.identifier} value={lang.identifier}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {!showGptSearch && (
+            <button
+              className="h-12 mr-5 px-4 mt-2 rounded-lg font-semibold text-white bg-purple-800 hover:scale-95"
+              onClick={handleGptSearchClick}
+            >
+              GPT Search
+            </button>
+          )}
+          {showGptSearch && (
+            <button
+              className="h-12 mr-5 px-4 mt-2 rounded-lg font-bold text-white bg-red-600 hover:scale-95"
+              onClick={handleGptSearchClick}
+            >
+              Netflix
+            </button>
+          )}
+          {!showGptSearch && (
+            <img
+              className="w-12 h-12 mr-5 mt-2 rounded-lg"
+              src={user?.photoURL}
+              alt="usericon"
+            />
+          )}
+          {!showGptSearch && (
+            <button
+              className=" h-12 mr-5 px-4 mt-[0.4rem]  font-bold text-lg text-white hover:scale-95 bg-black rounded-lg opacity-90"
+              onClick={handleSignOut}
+            >
+              Sign out
+            </button>
+          )}
         </div>
       )}
     </div>
