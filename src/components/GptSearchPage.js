@@ -7,7 +7,7 @@ import { BG_URL } from "../utils/constants";
 const GptSearchPage = () => {
   return (
     <div>
-      <div className="absolute">
+      <div className="fixed">
         <img
           src={BG_URL}
           alt="background-img"
