@@ -17,7 +17,7 @@ const Browse = () => {
   useUpcomingMovies();
 
   return (
-    <div>
+    <div className="bg-black">
       <Header />
       {showGptSearch && <Gptsearch />}
       {!showGptSearch && <MainContainer />}
